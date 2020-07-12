@@ -19,6 +19,8 @@ do
 	fn="${g}_adj.tsv"
 	url="https://graphchallenge.s3.amazonaws.com/snap/${g}/${fn}"
 	fpath="${dir}/${fn}"
-	curl -s ${url} -o ${fpath}
+	if [ ! -f "$fpath" ]; then
+    	curl -s ${url} -o ${fpath}
+	fi
 	julia bench.jl ${fpath}
 done
