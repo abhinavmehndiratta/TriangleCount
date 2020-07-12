@@ -33,6 +33,44 @@ function triangle_count(g::SimpleGraph{T}, ::DODG) where T
     return Float64(ntri)
 end
 
+struct ThreadedDODG <: TriangleCountAlgorithm end
+
+function triangle_count(g::SimpleGraph{T}, ::ThreadedDODG) where T
+    ntri = zeros(UInt64, nthreads())
+    deg = degree(g)
+    adjlist = [Vector{T}() for _ in vertices(g)]
+    partitions = greedy_contiguous_partition(deg, nthreads())
+    @threads for u_set in partitions
+        @inbounds for u in u_set
+            for v in neighbors(g, u)
+                if deg[v] > deg[u] || (deg[v] == deg[u] && v > u)
+                    push!(adjlist[u], v)
+                end
+            end
+        end
+    end
+    partitions = greedy_contiguous_partition(map(v -> length(adjlist[v])^2, vertices(g)), nthreads())
+    @threads for u_set in partitions
+        tid = threadid()
+        @inbounds for u in u_set
+            adju = adjlist[u]
+            lenu = length(adju)
+            for i = 1:lenu
+                v = adju[i]
+                for j = i+1:lenu
+                    w = adju[j]
+                    wTov = (deg[v] > deg[w] || (deg[v] == deg[w] && v > w))
+                    if (wTov && insorted(v, adjlist[w])) ||
+                            (!wTov && insorted(w, adjlist[v]))
+                        ntri[tid] += 1
+                    end
+                end
+            end
+        end
+    end
+    return Float64(sum(ntri))
+end
+
 struct MatrixTrace <: TriangleCountAlgorithm end
 
 triangle_count(A::SparseMatrixCSC, ::MatrixTrace) = sum(A^2 .* A)/6
