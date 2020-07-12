@@ -3,9 +3,8 @@ function loadtsv(io::IO, ::Type{SimpleGraph})
     elist = Vector{Tuple{Int64, Int64}}()
     nvg = 0
     while !eof(io)
-        line = strip(chomp(readline(io)))
         r = r"(\w+)[\t](\w+)[\t](\w+)"
-        s, d, _ = match(r, line).captures
+        s, d, _ = match(r, readline(io)).captures
         sint = parse(Int64, s)
         dint = parse(Int64, d)
         push!(elist, (sint, dint))
@@ -25,9 +24,8 @@ function loadtsv(io::IO, ::Type{SparseMatrixCSC})
     I = Vector{Int64}()
     J = Vector{Int64}()
     while !eof(io)
-        line = strip(chomp(readline(io)))
         r = r"(\w+)[\t](\w+)[\t](\w+)"
-        s, d, _ = match(r, line).captures
+        s, d, _ = match(r, readline(io)).captures
         push!(I, parse(Int64, s))
         push!(J, parse(Int64, d))
     end
