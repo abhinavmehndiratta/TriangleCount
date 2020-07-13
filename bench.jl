@@ -1,9 +1,7 @@
-using SparseArrays, LightGraphs, BenchmarkTools
+using SparseArrays, LightGraphs
 using LightGraphs: insorted, greedy_contiguous_partition
 using LightGraphs.SimpleGraphsCore: SimpleGraph
-using BenchmarkTools: mean
 using Base.Threads
-BenchmarkTools.DEFAULT_PARAMETERS.samples = 100
 
 include("loadtsv.jl")
 include("triangle_count.jl")
@@ -14,13 +12,10 @@ A = loadtsv(gpath, SparseMatrixCSC)
 
 println("|V| = ", nv(SG), " |E| = ", ne(SG))
 
-t = @benchmark triangle_count($SG, DODG())
-println("dodg: ", "number of triangles = ", triangle_count(SG, DODG()), ", time = ", mean(t))
+println("dodg: ", "number of triangles = ", triangle_count(SG, DODG()), ", time = ", @elapsed triangle_count($SG, DODG()))
 
-t = @benchmark triangle_count($SG, ThreadedDODG())
-println("threadeddodg: ", "number of triangles = ", triangle_count(SG, ThreadedDODG()), ", time = ", mean(t))
+println("threadeddodg: ", "number of triangles = ", triangle_count(SG, ThreadedDODG()), ", time = ", @elapsed triangle_count($SG, ThreadedDODG()))
 
-t = @benchmark triangle_count($A, MatrixTrace())
-println("matrixtrace: ", "number of triangles = ", triangle_count(A, MatrixTrace()), ", time = ", mean(t))
+println("matrixtrace: ", "number of triangles = ", triangle_count(A, MatrixTrace()), ", time = ", @elapsed triangle_count($A, MatrixTrace()))
 
 println("=============================================")
