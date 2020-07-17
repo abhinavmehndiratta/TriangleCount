@@ -14,8 +14,8 @@ println("|V| = ", nv(SG), " |E| = ", ne(SG))
 
 println("dodg: ", "number of triangles = ", triangle_count(SG, DODG()), ", time = ", @elapsed triangle_count(SG, DODG()))
 
-println("threadeddodg: ", "number of triangles = ", triangle_count(SG, ThreadedDODG()), ", time = ", @elapsed triangle_count(SG, ThreadedDODG()))
+println("threaded dodg: ", "number of triangles = ", triangle_count(SG, ThreadedDODG()), ", time = ", @elapsed triangle_count(SG, ThreadedDODG()))
 
-println("matrixtrace: ", "number of triangles = ", triangle_count(A, MatrixTrace()), ", time = ", @elapsed triangle_count(A, MatrixTrace()))
+println("matrix-method: ", "number of triangles = ", triangle_count(A, MatrixTrace()), ", time = ", @elapsed triangle_count(A, MatrixTrace()))
 
 println("=============================================")
