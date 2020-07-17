@@ -4,6 +4,23 @@ abstract type TriangleCountAlgorithm end
 
 struct DODG <: TriangleCountAlgorithm end
 
+@inline function insorted(item, collection; rev=false)
+    n = length(collection)
+    lo = 0
+    hi = n+1
+    lt = rev ? Base.isgreater : Base.isless
+    @inbounds while hi-lo > 1
+        m = lo + ((hi - lo) >>> 0x01)
+        if lt(collection[m], item)
+            lo = m
+        else
+            hi = m
+        end
+    end
+    hi > n && return false
+    return collection[hi] == item
+end
+
 function triangle_count(g::SimpleGraph{T}, ::DODG) where T
     ntri = UInt64(0)
     deg = degree(g)

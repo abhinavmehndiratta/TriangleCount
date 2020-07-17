@@ -1,5 +1,5 @@
 using SparseArrays, LightGraphs
-using LightGraphs: insorted, greedy_contiguous_partition
+using LightGraphs: greedy_contiguous_partition
 using LightGraphs.SimpleGraphsCore: SimpleGraph
 using Base.Threads
 
